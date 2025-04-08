@@ -1,6 +1,9 @@
+
 module PPON where
 
 import Documento
+
+
 
 data PPON
   = TextoPP String
@@ -14,26 +17,18 @@ pponAtomico (IntPP i) = True
 pponAtomico _ = False
 
 
-foldPpon :: (String -> b) -> (Int -> b) -> ([(String, PPON)] -> [b] -> b) -> PPON -> b
-foldPpon fTextoPP fIntPP fObjPP ppon = 
-  case ppon of
-    TextoPP s -> fTextoPP s
-    IntPP i -> fIntPP i
-    ObjetoPP xs -> fObjPP xs (map (\(x, y) -> rec y) xs)
-    where 
-      rec = foldPpon fTextoPP fIntPP fObjPP
+pponObjetoSimple :: PPON -> Bool
+pponObjetoSimple (TextoPP s) = False
+pponObjetoSimple (IntPP i) = False
+pponObjetoSimple (ObjetoPP ppon) = foldr ((\x acc -> x && acc) . (\(_,v) -> pponAtomico v)) True ppon
 
-pericles :: PPON
-pericles = ObjetoPP [("nombre", TextoPP "Pericles"), ("edad", IntPP 30)]
-
---pponObjetoSimple :: PPON -> Bool
---pponObjetoSimple ppon =
-
-
-
+pponCompuesto :: PPON -> Bool
+pponCompuesto x = not (pponObjetoSimple x) &&  not (pponAtomico x)
 
 intercalar :: Doc -> [Doc] -> Doc
-intercalar = error "PENDIENTE: Ejercicio 7"
+intercalar d [] = vacio
+intercalar sep ds  = foldr (\doc rec-> doc <+> sep <+> rec) (last ds) (init ds)
+
 
 entreLlaves :: [Doc] -> Doc
 entreLlaves [] = texto "{ }"
@@ -48,7 +43,27 @@ entreLlaves ds =
     <+> texto "}"
 
 aplanar :: Doc -> Doc
-aplanar = error "PENDIENTE: Ejercicio 8"
+aplanar = foldDoc vacio (\s rec-> texto s <+> rec) (\i rec-> texto " " <+> rec)
 
 pponADoc :: PPON -> Doc
-pponADoc = error "PENDIENTE: Ejercicio 9"
+pponADoc (TextoPP s) = texto (show s)
+pponADoc (IntPP i) = texto (show i)
+pponADoc (ObjetoPP []) = texto "}"
+pponADoc (ObjetoPP xs) =  if pponCompuesto (ObjetoPP xs) then entreLlaves (pponAux (ObjetoPP xs)) else  texto "{ " <+> intercalar (texto ", ") (pponAux (ObjetoPP xs))  <+> texto " }"
+
+pponAux :: PPON -> [Doc]
+pponAux (ObjetoPP []) = []
+pponAux (ObjetoPP ((s,obj):xs)) = texto (show s) <+> texto ": " <+> pponADoc obj: pponAux (ObjetoPP xs)
+
+
+-- pericles :: PPON
+-- pericles = ObjetoPP [("nombre", TextoPP "Pericles"), ("edad", IntPP 30)]
+
+-- pedro :: PPON
+-- pedro = ObjetoPP [("0", addams),("1", addams),("2", merlina)]
+
+-- merlina :: PPON
+-- merlina = ObjetoPP [("nombre", TextoPP "Merlina"), ("edad", IntPP 24)]
+
+-- addams :: PPON
+-- addams = ObjetoPP [("0", pericles), ("1", merlina)]

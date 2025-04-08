@@ -60,6 +60,8 @@ d1 <+> d2 = foldDoc d2 (\s rec ->
     ) 
     (\i rec -> Linea i rec) d1
 
+
+
 indentar :: Int -> Doc -> Doc
 indentar i = foldDoc (Vacio) (\s rec -> Texto s rec) (\j rec -> Linea (i+j) rec) 
 

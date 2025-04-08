@@ -10,6 +10,10 @@ sumaAux = foldr (+) 0
 suma :: Num a => a -> a -> a
 suma x y = sumaAux [x,y]
 
+f :: a -> a
+f x = x
+
+
 --pertenece :: Num a => a -> [a] -> Bool
 --pertenece = foldr (\x xs -> x == e) [] == [e] 
 
