@@ -26,20 +26,25 @@ testsEj1 =
   test
     [ 
       "foldDoc identidad" ~: foldDoc vacio (\s rec -> texto s <+> rec) (\j rec -> (indentar j linea) <+> rec) (indentar 2 (texto "a" <+> linea <+> texto "b")) ~?= indentar 2 (texto "a" <+> linea <+> texto "b"),
-      "foldDoc indentar dos espacios" ~: foldDoc vacio (\s rec -> texto s <+> rec) (\j rec -> (indentar (j+2) linea) <+> rec) (indentar 2 (texto "a" <+> linea <+> texto "b")) ~?= indentar 4 (texto "a" <+> linea <+> texto "b")
+      "foldDoc indentar dos espacios" ~: foldDoc vacio (\s rec -> texto s <+> rec) (\j rec -> (indentar (j+2) linea) <+> rec) (indentar 2 (texto "a" <+> linea <+> texto "b")) ~?= indentar 4 (texto "a" <+> linea <+> texto "b"),
+      "foldDoc sacar las lineas" ~: foldDoc vacio (\s rec -> texto s <+> rec) (\j rec -> rec) (indentar 2 (texto "a" <+> linea <+> texto "b")) ~?= texto "ab"
     ]
---testeamos el uso de un fold identidad, es decir que no aplique ninguna función, y otra indentando 2 espacios.
+-- testeamos el uso de un foldDoc con la función identidad, es decir que no cambie el doc, otra que indente 2 espacios, y otra que saque las lineas.
+
 testsEj2 :: Test
 testsEj2 =
   test
-    [ (texto "a" <+> linea) <+> texto "b" ~?= texto "a" <+> (linea <+> texto "b"),
-      texto "" <+> texto "x" ~?= texto "x",
-      texto "x" <+> texto "" ~?= texto "x",
-      texto "" <+> texto "" ~?= texto "",
-      texto "a" <+> vacio <+> texto "b" ~?= texto "ab",
-      vacio <+> texto "a" <+> vacio ~?= texto "a"
+    [ "concatenar asociativo" ~: (texto "a" <+> linea) <+> texto "b" ~?= texto "a" <+> (linea <+> texto "b"),
+      "vacio y string 1 char" ~: texto "" <+> texto "x" ~?= texto "x",
+      "string 1 char y vacio" ~: texto "x" <+> texto "" ~?= texto "x",
+      "vacio y vacio" ~: texto "" <+> texto "" ~?= texto "",
+      "string vacio string" ~: texto "a" <+> vacio <+> texto "b" ~?= texto "ab",
+      "vacio string vacio" ~: vacio <+> texto "a" <+> vacio ~?= texto "a",
+      "concatenar indentar" ~: texto "a" <+> indentar 2 linea <+> texto "b" ~?= indentar 2 (texto "a" <+> linea <+> texto "b"),
+      "vacio con linea" ~: vacio <+> linea ~?= linea
     ]
 --testeamos concatenar de formas simples y por ultimo probar multiples concatenaciones, sumado a concatenar vacios para verificar que se mantenga el doc.
+
 testsEj3 :: Test
 testsEj3 =
   test
@@ -47,6 +52,7 @@ testsEj3 =
       indentar 3 (texto "a" <+> linea) ~?= texto "a" <+> indentar 3 linea
     ]
 --testeamos el funcionamiento basico de indentar, y un test un poco más complejo para verificar el resultado de una asociacion distinta.
+
 testsEj4 :: Test
 testsEj4 =
   test
