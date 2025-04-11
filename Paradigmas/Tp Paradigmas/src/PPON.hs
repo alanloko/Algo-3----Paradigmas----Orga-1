@@ -22,8 +22,6 @@ pponObjetoSimple (TextoPP s) = False
 pponObjetoSimple (IntPP i) = False
 pponObjetoSimple (ObjetoPP ppon) = foldr ((\x acc -> x && acc) . (\(_,v) -> pponAtomico v)) True ppon
 
-pponCompuesto :: PPON -> Bool
-pponCompuesto x = not (pponObjetoSimple x) &&  not (pponAtomico x)
 
 intercalar :: Doc -> [Doc] -> Doc
 intercalar d [] = vacio
@@ -45,14 +43,18 @@ entreLlaves ds =
 aplanar :: Doc -> Doc
 aplanar = foldDoc vacio (\s rec-> texto s <+> rec) (\i rec-> texto " " <+> rec)
 
+-- pponADoc usa recursion primitiva, esto se puede ver en la funcion pponCompuesto, donde recorremos el Objeto para 
+-- corroborar que no sea Atomico ni Simple, accediendo a todos los valores del objeto antes de hacer el calculo que necesitamos
 pponADoc :: PPON -> Doc
 pponADoc (TextoPP s) = texto (show s)
 pponADoc (IntPP i) = texto (show i)
 pponADoc (ObjetoPP []) = texto "{ }"
 pponADoc (ObjetoPP xs) =  if pponCompuesto (ObjetoPP xs) then entreLlaves (pponAux (ObjetoPP xs)) else  texto "{ " <+> intercalar (texto ", ") (pponAux (ObjetoPP xs))  <+> texto " }"
 
--- Se utiliza recursión estructural en pponAux ya que el caso base (ObjetoPP []) devuelve un valor fijo ([]) y el caso recursivo se escribe solamente usando s, obj y pponAux (ObjetoPP xs).
--- No se utiliza ObjetoPP xs por sí solo en el caso recursivo, y por eso no es ni primitiva ni global.
+pponCompuesto :: PPON -> Bool
+pponCompuesto x = not (pponObjetoSimple x) &&  not (pponAtomico x)
+
+
 pponAux :: PPON -> [Doc]
 pponAux (ObjetoPP []) = []
 pponAux (ObjetoPP ((s,obj):xs)) = texto (show s) <+> texto ": " <+> pponADoc obj: pponAux (ObjetoPP xs)
