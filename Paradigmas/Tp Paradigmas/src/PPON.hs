@@ -58,14 +58,3 @@ pponAux (ObjetoPP []) = []
 pponAux (ObjetoPP ((s,obj):xs)) = texto (show s) <+> texto ": " <+> pponADoc obj: pponAux (ObjetoPP xs)
 
 
--- pericles :: PPON
--- pericles = ObjetoPP [("nombre", TextoPP "Pericles"), ("edad", IntPP 30)]
-
--- pedro :: PPON
--- pedro = ObjetoPP [("0", addams),("1", addams),("2", merlina)]
-
--- merlina :: PPON
--- merlina = ObjetoPP [("nombre", TextoPP "Merlina"), ("edad", IntPP 24)]
-
--- addams :: PPON
--- addams = ObjetoPP [("0", pericles), ("1", merlina)]

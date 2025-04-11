@@ -37,11 +37,6 @@ foldDoc fVacio fTexto fLinea doc =
       where
         rec = foldDoc fVacio fTexto fLinea
 
---dCustom :: Doc
---dCustom = Texto "a" (Linea 2 (Texto "b" (Linea 2 (Texto "c" Vacio))))
-
---dCustom2 :: Doc
---dCustom2 = Texto "a" (Linea 2 (Texto "b" (Linea 0 (Texto "c" Vacio))))
 
 -- NOTA: Se declara `infixr 6 <+>` para que `d1 <+> d2 <+> d3` sea equivalente a `d1 <+> (d2 <+> d3)`
 -- También permite que expresiones como `texto "a" <+> linea <+> texto "c"` sean válidas sin la necesidad de usar paréntesis.
@@ -66,14 +61,10 @@ d1 <+> d2 = foldDoc d2 (\s rec ->
 
 
 -- Esta función cumple el invariante de Doc ya que:
--- Si i es un número negativo, se dejan los textos y las lineas del Doc como están. Y como cumplian por definición su invariante, lo siguen cumpliendo.
--- Si i es un número positivo o cero,
--- los textos se dejan como están, y debido a que cumplen por definición su invariante, se sigue cumpliendo el invariante.
--- se suma i a j en las lineas Linea j d, y como i es un numero positivo o cero y j >= 0 por invariante, (i+j) >= 0 y se sigue cumpliendo el invariante.
+-- i es un número positivo,
+-- se suma i a j en las lineas Linea j d, y como i es un numero positivo y j >= 0 por invariante, (i+j) >= 0 y se sigue cumpliendo el invariante.
 indentar :: Int -> Doc -> Doc
-indentar i 
-  | i < 0 = foldDoc (Vacio) (\s rec -> Texto s rec) (\j rec -> Linea j rec)
-  | otherwise = foldDoc (Vacio) (\s rec -> Texto s rec) (\j rec -> Linea (i+j) rec) 
+indentar i = foldDoc (Vacio) (\s rec -> Texto s rec) (\j rec -> Linea (i+j) rec) 
 
 mostrar :: Doc -> String
 mostrar = foldDoc "" (\s rec -> s ++ rec) (\i rec -> "\n" ++ (replicate i ' ') ++ rec)

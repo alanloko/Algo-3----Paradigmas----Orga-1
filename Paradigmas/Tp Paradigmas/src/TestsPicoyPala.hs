@@ -52,8 +52,7 @@ testsEj3 =
     [ "indentar 0 con texto" ~: indentar 0 (texto "sin cambio") ~?= texto "sin cambio",
       "indentar texto y linea" ~: indentar 3 (texto "a" <+> linea) ~?= texto "a" <+> indentar 3 linea,
       "indentar 2 lineas" ~: indentar 2 (texto "a" <+> linea <+> texto "b" <+> linea) ~?= texto "a" <+> indentar 2 linea <+> texto "b" <+> indentar 2 linea,
-      "indentar vacio" ~: indentar 2 vacio ~?= vacio,
-      "indentar nro negativo" ~: indentar (-3) (texto "a" <+> linea) ~?= texto "a" <+> linea
+      "indentar vacio" ~: indentar 2 vacio ~?= vacio
     ]
 -- testeamos el funcionamiento basico de indentar
 
