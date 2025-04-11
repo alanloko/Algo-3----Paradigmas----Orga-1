@@ -43,18 +43,18 @@ entreLlaves ds =
 aplanar :: Doc -> Doc
 aplanar = foldDoc vacio (\s rec-> texto s <+> rec) (\i rec-> texto " " <+> rec)
 
-
+-- Se utiliza recursión primitiva sobre el tipo recurtsivo PPON 
+-- por el hecho de que en pponCompuesto estamos accediendo a los parametros
+-- recursivos en la instancia actual del ObjetoPP sobre el que estamos evaluando.
 pponADoc :: PPON -> Doc
 pponADoc (TextoPP s) = texto (show s)
 pponADoc (IntPP i) = texto (show i)
 pponADoc (ObjetoPP []) = texto "{ }"
 pponADoc (ObjetoPP xs) =  if pponCompuesto (ObjetoPP xs) then entreLlaves (pponAux xs) else  texto "{ " <+> intercalar (texto ", ") (pponAux xs)  <+> texto " }"
 
--- Se utiliza recursión estructural en pponAux ya que el caso base (ObjetoPP []) devuelve un valor fijo ([]) y el caso recursivo se escribe solamente usando s, obj y pponAux (ObjetoPP xs).
--- No se utiliza ObjetoPP xs por sí solo en el caso recursivo, y por eso no es ni primitiva ni global.
+
 pponCompuesto :: PPON -> Bool
 pponCompuesto x = not (pponObjetoSimple x) &&  not (pponAtomico x)
-
 
 pponAux :: [(String,PPON)] -> [Doc]
 pponAux [] = []
