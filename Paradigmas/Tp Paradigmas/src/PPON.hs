@@ -50,14 +50,11 @@ pponADoc :: PPON -> Doc
 pponADoc (TextoPP s) = texto (show s)
 pponADoc (IntPP i) = texto (show i)
 pponADoc (ObjetoPP []) = texto "{ }"
-pponADoc (ObjetoPP xs) =  if pponCompuesto (ObjetoPP xs) then entreLlaves (pponAux xs) else  texto "{ " <+> intercalar (texto ", ") (pponAux xs)  <+> texto " }"
-
+pponADoc (ObjetoPP xs) =  if pponCompuesto (ObjetoPP xs) then entreLlaves (pponADocAux xs) else  texto "{ " <+> intercalar (texto ", ") (pponADocAux xs)  <+> texto " }"
 
 pponCompuesto :: PPON -> Bool
 pponCompuesto x = not (pponObjetoSimple x) &&  not (pponAtomico x)
 
-pponAux :: [(String,PPON)] -> [Doc]
-pponAux [] = []
-pponAux ((s,obj):xs) = texto (show s) <+> texto ": " <+> pponADoc obj : pponAux xs
-
+pponADocAux :: [(String,PPON)] -> [Doc]
+pponADocAux = foldr (\(s,obj) rec -> texto (show s) <+> texto ": " <+> pponADoc obj : rec) []
 
