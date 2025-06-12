@@ -63,10 +63,19 @@ subKPieza(K, [_|T], R) :-
 
 % Ej 6:
 
-seccionTablero(_,1, _, _, []).
-seccionTablero([F | T], Alto, Ancho, (I,J), [R | ST]) :-
-    Alto > 0,
-    seccionTablero(T, Alto1, Ancho, (I,J), ST),
-    Alto is Alto1 + 1,
-    sublista(I, Ancho, F, R).
+% seccionTablero(_,0, _, _, []).
+% seccionTablero([F | T], Alto, Ancho, (I,J), [R | ST]) :-
+%     sublista(I, Alto, T, R1)
+%     seccionTablero(T, Alto1, Ancho, (I,J), ST),
+%     Alto is Alto1 + 1,
+%     sublista(J, Ancho, F, R).
 
+seccionTablero(T, Alto, Ancho, (I,J), ST) :-
+    I0 is I - 1,
+    J0 is J - 1,
+    sublista(I0, Alto, T, R),
+    seccionFila(R,J0, Ancho, ST).
+
+
+seccionFila([], _, _, []).
+seccionFila([F | T], J, Ancho, [R | Cola]) :- sublista(J, Ancho, F, R), seccionFila(T, J, Ancho, Cola).
