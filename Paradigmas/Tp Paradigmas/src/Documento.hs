@@ -29,13 +29,15 @@ texto [] = Vacio
 texto t = Texto t Vacio
 
 foldDoc :: b -> (String -> b -> b) -> (Int -> b -> b) -> Doc -> b
-foldDoc fVacio fTexto fLinea doc = 
+foldDoc fVacio fTexto fLinea doc =
     case doc of
       Vacio -> fVacio
       Texto s d -> fTexto s (rec d)
       Linea i d -> fLinea i (rec d)
       where
         rec = foldDoc fVacio fTexto fLinea
+
+
 
 
 -- NOTA: Se declara `infixr 6 <+>` para que `d1 <+> d2 <+> d3` sea equivalente a `d1 <+> (d2 <+> d3)`
@@ -52,11 +54,11 @@ infixr 6 <+>
 (<+>) :: Doc -> Doc -> Doc
 d1 <+> Vacio = d1
 Vacio <+> d2 = d2
-d1 <+> d2 = foldDoc d2 (\s rec -> 
+d1 <+> d2 = foldDoc d2 (\s rec ->
   case rec of
     Texto s1 d -> Texto (s ++ s1) d
-    otherwise -> Texto s rec 
-    ) 
+    otherwise -> Texto s rec
+    )
     (\i rec -> Linea i rec) d1
 
 
@@ -64,7 +66,7 @@ d1 <+> d2 = foldDoc d2 (\s rec ->
 -- i es un número positivo,
 -- se suma i a j en las lineas Linea j d, y como i es un numero positivo y j >= 0 por invariante, (i+j) >= 0 y se sigue cumpliendo el invariante.
 indentar :: Int -> Doc -> Doc
-indentar i = foldDoc (Vacio) (\s rec -> Texto s rec) (\j rec -> Linea (i+j) rec) 
+indentar i = foldDoc Vacio (\s rec -> Texto s rec) (\j rec -> Linea (i+j) rec)
 
 mostrar :: Doc -> String
 mostrar = foldDoc "" (\s rec -> s ++ rec) (\i rec -> "\n" ++ (replicate i ' ') ++ rec)

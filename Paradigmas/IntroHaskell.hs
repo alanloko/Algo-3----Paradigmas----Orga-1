@@ -196,3 +196,11 @@ compose = foldr (.) id
 
 entrelazar2 :: [a] -> [a] -> [a]
 entrelazar2 = foldr (\x rec ys -> if null ys then x : rec [] else x : head ys : rec []) (const [])
+
+mapPares2 :: (a -> b -> c) -> [(a,b)] -> [c]
+mapPares2 f  = map (uncurry f)
+
+foldr1' :: (a -> a -> a) -> [a] -> a
+foldr1' fLista [x] = x
+foldr1' fLista (x:xs) = fLista x (foldr1' fLista xs)
+

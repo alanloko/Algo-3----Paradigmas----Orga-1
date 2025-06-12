@@ -5,17 +5,21 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "clang++ build and debug active file",
-            "type": "cppdbg",
+            "type": "venus",
             "request": "launch",
-            "program": "${fileDirname}/${fileBasenameNoExtension}",
-            "args": [],
-            "stopAtEntry": true,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "lldb",
-            "prelaunchTask": "C/C++: clang++ build active file"
+            "name": "Launch current file with all options",
+            "program": "${file}",
+            "stopOnEntry": true,
+            "stopAtBreakpoints": true,
+            "openViews": [
+                "Robot",
+                "LED Matrix",
+                "Seven Segment Board"
+            ],
+            "ledMatrixSize": {
+                "x": 10,
+                "y": 10
+            }
         }
     ]
 }
