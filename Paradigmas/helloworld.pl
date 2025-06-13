@@ -91,3 +91,13 @@ interseccion([X | Xs], Ys, L) :- not(member(X, Ys)), interseccion(Xs, Ys, L).
 partir(0, Xs, [], Xs).
 partir(N, [X | Xs], [X | L1], L2) :-  partir(N1, Xs, L1 ,L2), N is N1 + 1. 
 
+iesimo(0, [X | _] , X).
+iesimo(I, [_ | T], X) :- I \= 0, I1 is I - 1, iesimo(I1, T, X).
+
+% Pares menores que X: 
+
+pmq(X, Y) :- % Genero todos los numeros entre 0 y X, dsp me quedo con los que son pares.
+    between(0, X, Y), % Instancio Y, sino no podria chequear que sea par
+    0 =:= Y mod 2.  % Y ya instanciada, pido que sea par.
+    % Si yo primero genero todos los numeros pares y despues veo cuales son menores a X, no termina nunca el programa
+    % seria una generacion infinita primero, hay que tener cuidado con el orden.

@@ -4,9 +4,9 @@
 
 % Ej 1:
 
-sublista(M, N, L, R) :- 
-    length(L1, M), % L1 tiene longitud M, es la lista de los M descartados
-    length(R, N), % R va a tener longitud N, siendo la sublista que queremos
+sublista(Descartar, Tomar, L, R) :- 
+    length(L1, Descartar), % L1 tiene longitud M, es la lista de los M descartados
+    length(R, Tomar), % R va a tener longitud N, siendo la sublista que queremos
     append(L1, R, L3), % Los uno, y junto a los elementos restantes
     append(L3, _, L). % tienen que ser igual a la lista inicial
 
@@ -46,29 +46,7 @@ subKPieza(K, [_|T], R) :-
     K > 0,
     subKPieza(K, T, R).
 
-
-% kPiezas(0, []).
-% kPiezas(K, [Pieza | PS]) :-
-%     K > 0,
-%     %%%%%%
-%     length(PS, K1),
-%     %%%%%%
-%     nombrePiezas(P),
-%     member(Pieza, P),
-%     %%%%%
-%     kPiezas(K1, PS),
-%     not(member(Pieza,PS)),
-%     K is K1 + 1.
-%     %%%%%%%%
-
 % Ej 6:
-
-% seccionTablero(_,0, _, _, []).
-% seccionTablero([F | T], Alto, Ancho, (I,J), [R | ST]) :-
-%     sublista(I, Alto, T, R1)
-%     seccionTablero(T, Alto1, Ancho, (I,J), ST),
-%     Alto is Alto1 + 1,
-%     sublista(J, Ancho, F, R).
 
 seccionTablero(T, Alto, Ancho, (I,J), ST) :-
     I0 is I - 1,
@@ -79,3 +57,42 @@ seccionTablero(T, Alto, Ancho, (I,J), ST) :-
 
 seccionFila([], _, _, []).
 seccionFila([F | T], J, Ancho, [R | Cola]) :- sublista(J, Ancho, F, R), seccionFila(T, J, Ancho, Cola).
+
+% Ej 7:
+
+ubicarPieza(Tablero, Identificador) :-
+    pieza(Identificador, E),
+    coordenadas(Tablero, (I,J)),
+    tamano(E, F,C),
+    seccionTablero(Tablero, F, C, (I,J), E). 
+
+% Ej 8:
+ubicarPiezas(_, _,[]).
+ubicarPiezas(Tablero, Poda,[Identificador | Identificadores]) :-
+    poda(Poda, Tablero),
+    ubicarPieza(Tablero, Identificador),
+    ubicarPiezas(Tablero, Poda, Identificadores).
+
+% Ej 9:
+
+llenarTablero(Poda, Columnas, Tablero) :-
+    tablero(Columnas, Tablero),
+    kPiezas(Columnas, Piezas),
+    ubicarPiezas(Tablero, Poda, Piezas).
+
+% Ej 10:   
+
+cantSoluciones(Poda, Columnas, N) :-
+    findall(T, llenarTablero(Poda, Columnas, T), TS),
+    length(TS, N).
+
+
+poda(sinPoda, _).
+poda(podaMod5, T) :- todosGruposLibresModulo5(T).
+
+coordLibre(T,(I,J)) :-  coordenadas(T,(I,J)), seccionTablero(T, 1, 1, (I,J), R), not(ground(R)).
+
+todosGruposLibresModulo5(T) :- findall((I,J), coordLibre(T, (I,J)),L), agrupar(L,Res), todosMod5(Res).
+
+todosMod5([]).
+todosMod5([L | T]) :- length(L, N), 0 =:= N mod 5, todosMod5(T).
