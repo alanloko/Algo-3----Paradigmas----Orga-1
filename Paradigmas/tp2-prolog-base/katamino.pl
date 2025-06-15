@@ -95,4 +95,6 @@ coordLibre(T,(I,J)) :-  coordenadas(T,(I,J)), seccionTablero(T, 1, 1, (I,J), R),
 todosGruposLibresModulo5(T) :- findall((I,J), coordLibre(T, (I,J)),L), agrupar(L,Res), todosMod5(Res).
 
 todosMod5([]).
-todosMod5([L | T]) :- length(L, N), 0 =:= N mod 5, todosMod5(T).
+todosMod5(LugaresLibres) :- maplist(esMod5,LugaresLibres).
+
+esMod5(L) :- length(L, N), 0 =:= N mod 5.

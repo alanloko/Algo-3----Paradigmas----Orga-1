@@ -1,6 +1,6 @@
 % Ej 1:
 
-adre(juan, carlos).
+padre(juan, carlos).
 padre(juan, luis).
 padre(carlos, daniel).
 padre(carlos, diego).
@@ -83,7 +83,7 @@ aplanar([X | Xs], Ys) :-
     append(Y , Zs, Ys).
 
 interseccion([],_,[]).
-interseccion([X | Xs], Ys, [X | L]) :-  member(X, Ys), interseccion(Xs, Ys, L), not(member(X, L)).
+interseccion([X | Xs], Ys, [X | L]) :-  member(X, Ys), (Xs, Ys, Linterseccion), not(member(X, L)).
 interseccion([X | Xs], Ys, L) :- not(member(X, Ys)), interseccion(Xs, Ys, L).
 
 % Partir(N, Xs, L1, L2)
