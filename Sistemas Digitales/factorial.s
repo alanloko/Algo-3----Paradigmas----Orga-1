@@ -22,10 +22,10 @@ factorial:
     beqz a0, casobase1
 
 recursion:
-    addi a0, a0, -1
-    jal factorial
-    lw a1, (0)sp
-    jal multiplicar
+    addi a0, a0, -1 # n - 1
+    jal factorial # factorial(n -1)
+    lw a1, (0)sp # n
+    jal multiplicar # n*factorial(n-1)
     j return
     
 casobase1:
@@ -47,12 +47,12 @@ multiplicar:
     sw ra, (12)sp
     
     addi t0, a0, 0
-    addi a0, x0, 0
+    addi a0, x0, 0 # inicializas n en 0
 loop:
-    beqz a1, returnMultiplicar
-    add a0, a0, t0
-    addi a1, a1, -1
-    j loop
+    beqz a1, returnMultiplicar # si m es = 0, return
+    add a0, a0, t0 # a0 + n, m veces 
+    addi a1, a1, -1 # m - 1
+    j loop # se repite hasta m = 0
     
 
 returnMultiplicar:

@@ -9,7 +9,7 @@
 \f0\fs24 \cf0 \expnd0\expndtw0\kerning0
 \outl0\strokewidth0 \strokec2 .data\
     n:\
-        .word 7\
+        .word 6\
 .text\
 main: \
     lw a0, n   # Carga n en a0\
@@ -39,20 +39,18 @@ recursion:\
     # F(x-1) + F(x-2) + F(x-3)\
     addi a0, a0, -1\
     jal Fibonacci3 # a0 = f(x-1)\
-    addi s0, a0, 0\
-    sw s0, (4)sp\
+    sw a0, (4)sp # f(x-1)\
     lw a0, (0)sp\
     addi a0, a0, -2\
-    jal Fibonacci3\
-    lw s0, (4)sp\
-    add s0, a0, s0\
-    sw s0, (4)sp\
+    jal Fibonacci3 # a0 = f(x-2)\
+    lw t1, (4)sp\
+    add a0, a0, t1\
+    sw a0, (4)sp  # f(x-1) + f(x-2)\
     lw a0, (0)sp\
     addi a0, a0, -3\
-    jal Fibonacci3\
-    lw s0, (4)sp\
-    add s0, a0, s0\
-    mv a0, s0\
+    jal Fibonacci3 # f(x-3)\
+    lw t1, (4)sp\
+    add a0, a0, t1 # a0 = f(x-1) + f(x-2) + f(x-3)\
     j return\
     \
     \
@@ -76,10 +74,9 @@ casobase3:\
 \
 \
 return:\
-    lw s0, (4)sp\
-    lw s1, (8)sp\
     lw ra, (12)sp\
     addi sp, sp, 16\
     ret \
+\
 \
 }
