@@ -4,11 +4,15 @@
 
 % Ej 1 sublista(+Descartar, +Tomar, +L, -R):
 
-sublista(Descartar, Tomar, L, R) :- 
+sublista(Descartar, Tomar, L, Tomados) :- 
     length(Descartados, Descartar), % L1 tiene longitud M, es la lista de los M descartados
     length(Tomados, Tomar), % R va a tener longitud N, siendo la sublista que queremos
     append(Descartados, Tomados, Union), % Los unimos, y juntamos a los elementos restantes
     append(Union, _, L). % La union junto a los elementos restantes no elegidos tienen que ser igual a la lista inicial
+
+% Ej 12: Puede ser usado para saber si una lista es sublista de otra pero no puede ser usado para saber si una sublista no es sublista de otra, en este caso se cuelga,
+%        dado que esta el append(Descartados, Tomados, Union), esto crea una generacion infinta de listas porque al no estar instanciado Descartar, se generan infinitos Descartados, donde ninguno va a cumplir el proximo predicado.
+%        Tambien podemos observar que al seguir buscando soluciones se va a colgar, por esta misma razon, con esto llegamos a la conclusion de que la funcion sublista(Descartar, Tomar, L, Tomados) no es reversible en el 1er y 4to argumento.
 
 % Ej 2 tablero(+K, -T):
 % Para preguntar:
@@ -18,7 +22,8 @@ tablero(K,Tablero) :-
 
 longitud(K, Fila) :-
     length(Fila,K).
- 
+% Otra pregunta, K por precondicion es mayor a 0?
+
 % Implementacion Inicial: 
 % tablero(K, [F1, F2, F3, F4, F5]) :- % Siempre son 5 Filas
 %     length(F1, K), % Por cada fila tienen que haber K elementos
@@ -44,17 +49,17 @@ coordenadas(Tablero, (I,J)) :-
 % Ej 5 kPiezas(+K, -PS):
 
 kPiezas(K, PS) :-
-    nombrePiezas(P),
-    subKPieza(K, P, PS).
+    nombrePiezas(P), % instanciamos las piezas
+    subKPieza(K, P, PS). % instanciamos PS como una lista de K piezas que pertenecen a P
 
-subKPieza(0, _, []).
-subKPieza(K, [H|T], [H|R]) :-
+subKPieza(0, _, []). % K = 0, lista vacia
+subKPieza(K, [Pieza|ColaPiezas], [Pieza|ColaPS]) :- % la cabeza de la lista de piezas (o sub-lista de piezas) tiene que ser igual a la cabeza del resultado.
     K > 0,
-    K1 is K - 1,
-    subKPieza(K1, T, R).
-subKPieza(K, [_|T], R) :-
-    K > 0,
-    subKPieza(K, T, R).
+    K1 is K - 1, % instanciamos K1 = K - 1, representa el haber "agregado" un elemento a R
+    subKPieza(K1, ColaPiezas, ColaPS). % pedimos que la cola de la lista cumpla con el predicado
+subKPieza(K, [_|ColaPiezas], PS) :- % Ignoramos el elemento en la cabeza de la lista de Piezas
+    K > 0, % al no "agregar" un elemento, seguimos queriendo K elementos restantes
+    subKPieza(K, ColaPiezas, PS). % Buscamos que los argumetos cumplan con el predicado
 
 % Ej 6 seccionTablero(+T,+ALTO, +ANCHO, +IJ, ?ST):
 
@@ -75,15 +80,17 @@ seccionFila([Fila | Tablero], J, Ancho, [Res | Cola]) :-
 ubicarPieza(Tablero, Identificador) :-
     pieza(Identificador, Pieza), % Dado el identificador, instanciamos la pieza
     coordenadas(Tablero, (I,J)), % instanciamos un par IJ de coordenadas validas
-    tamano(E, Fila,Columna), % insntanciamos el tamaño de la pieza
+    tamano(Pieza, Fila,Columna), % insntanciamos el tamaño de la pieza
     seccionTablero(Tablero, Fila, Columna, (I,J), Pieza). % Dado el IJ inicial, ubicamos la pieza en la seccion de su tamaño
 
 % Ej 8 ubicarPiezas(+Tablero, +Poda, +Identificadores):
 ubicarPiezas(_, _,[]).
 ubicarPiezas(Tablero, Poda,[Identificador | Identificadores]) :-
-    poda(Poda, Tablero), % en Caso de elegir podaMod5, esto no se cumple cuando el tablero no tenga una vencidad de variables libres que no sea multplo de 5
     ubicarPieza(Tablero, Identificador), % Ubicamos la pieza actual dentro del tablero
+    poda(Poda, Tablero), % en Caso de elegir podaMod5, esto no se cumple cuando el tablero no tenga una vencidad de variables libres que no sea multplo de 5
     ubicarPiezas(Tablero, Poda, Identificadores). % Luego de instanciar el tablero con la pieza ubicada, llamamos recursivamente a a funcion para ubicar las piezas restantes
+    
+    
 
 % Ej 9 llenarTablero(+Poda, +Columnas, -Tablero):
 
