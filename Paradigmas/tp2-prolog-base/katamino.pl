@@ -10,29 +10,21 @@ sublista(Descartar, Tomar, L, Tomados) :-
     append(Descartados, Tomados, Union), % Los unimos, y juntamos a los elementos restantes
     append(Union, _, L). % La union junto a los elementos restantes no elegidos tienen que ser igual a la lista inicial
 
-% Ej 12: Puede ser usado para saber si una lista es sublista de otra pero no puede ser usado para saber si una sublista no es sublista de otra, en este caso se cuelga,
-%        dado que esta el append(Descartados, Tomados, Union), esto crea una generacion infinta de listas porque al no estar instanciado Descartar, se generan infinitos Descartados, donde ninguno va a cumplir el proximo predicado.
-%        Tambien podemos observar que al seguir buscando soluciones se va a colgar, por esta misma razon, con esto llegamos a la conclusion de que la funcion sublista(Descartar, Tomar, L, Tomados) no es reversible en el 1er y 4to argumento.
+% Ej 12: Queremos ver si sublista(-Descartar, +Tomar, +L, +R):
+%   En el caso de que sea cierto que R/Tomados sea una Sublista, va a encontrar el tamaño de Descartar tal que se cumpla, pero luego de haberlos encontrado o que no existan desde un principio, este programa se va a colgar, dado que el length(Descartados, Descartar) crea una generacion infinta de listas porque al no estar instanciado Descartar, la lista Descartados puede tener diferntes longitudes, las cuales instancia a medida que avanza el programa infinitamente.
+%   Con esto llegamos a la conclusion de que la funcion sublista(Descartar, Tomar, L, Tomados) no es reversible en el 1er y 4to argumento.
 
 % Ej 2 tablero(+K, -T):
-% Para preguntar:
+
 tablero(K,Tablero) :-
     length(Tablero,5),
     maplist(longitud(K),Tablero).
 
 longitud(K, Fila) :-
     length(Fila,K).
-% Otra pregunta, K por precondicion es mayor a 0?
-
-% Implementacion Inicial: 
-% tablero(K, [F1, F2, F3, F4, F5]) :- % Siempre son 5 Filas
-%     length(F1, K), % Por cada fila tienen que haber K elementos
-%     length(F2, K),
-%     length(F3, K),
-%     length(F4, K),
-%     length(F5, K).
 
 % Ej 3 tamano(+M, -F, -C):
+
 tamano([], 0, _). % Caso Base
 tamano([Fila | M], F, C) :-
     tamano(M, F1, C), % llamamos recursivamente a la funcion
@@ -55,7 +47,7 @@ kPiezas(K, PS) :-
 subKPieza(0, _, []). % K = 0, lista vacia
 subKPieza(K, [Pieza|ColaPiezas], [Pieza|ColaPS]) :- % la cabeza de la lista de piezas (o sub-lista de piezas) tiene que ser igual a la cabeza del resultado.
     K > 0,
-    K1 is K - 1, % instanciamos K1 = K - 1, representa el haber "agregado" un elemento a R
+    K1 is K - 1, % instanciamos K1 = K - 1, representa el haber "agregado" un elemento a ColaPS
     subKPieza(K1, ColaPiezas, ColaPS). % pedimos que la cola de la lista cumpla con el predicado
 subKPieza(K, [_|ColaPiezas], PS) :- % Ignoramos el elemento en la cabeza de la lista de Piezas
     K > 0, % al no "agregar" un elemento, seguimos queriendo K elementos restantes

@@ -7,58 +7,86 @@
 \pard\pardeftab720\partightenfactor0
 
 \f0\fs24 \cf0 \expnd0\expndtw0\kerning0
-\outl0\strokewidth0 \strokec2 .data\
-    lista:\
-        .word 20,39,47,55,10,0,-1\
-.text\
-main: \
-    la a0, lista   # Carga la direcci\'f3n de 'lista' en a0\
-    li a1, 7\
-    slli a1, a1, 2\
-    jal ra, InvertirArreglo\
-    li a2, 1\
-    bne a0, a2, noFunciona\
-funciona: \
-    li a1, 1\
-    j fin\
-noFunciona: \
-    li a1, 0\
-fin: \
+\outl0\strokewidth0 \strokec2 .text\
+\
+main:\
+    li a0, 17\
+    jal es_primo\
+\
+fin:\
     j fin\
 \
-InvertirArreglo: \
+es_primo:\
     addi sp, sp, -16\
-    sw a0, (0)sp\
-    sw a1, (4)sp\
-    sw ra, (12)sp\
-    addi t0, x0, 0\
-loop:\
-    lw a0, (0)sp # cargo el puntero a la lista\
-    add a0, a0, t0 # t0 actua como el iesimo elemento\
-    lw a0, (0)a0 # cargo en a0, el valor que se ubica en el puntero de a0\
-    sw t0, (8)sp\
-    jal ra, invx # a0 = -a0\
-    lw t0, (8)sp\
-    mv t1, a0 # t1 = -a0\
-    lw a0, (0)sp # cargo el puntero de la lista\
-    add a0, a0, t0 # desplazo al i-esimo elemento\
-    sw t1, (0)a0 # guardo -a0 en el puntero del i-esimo elemento\
-    addi t0, t0, 4 # avanzo a i + 1\
-    bne t0, a1, loop # si i < n loop sino termina\
-    #\
-    lw a0, (0)sp\
-    lw a1, (4)sp\
-    lw ra, (8)sp\
-    addi sp, sp, 12\
-    ret \
+    sw ra, (0)sp\
+    jal cantidad_divisores\
+    addi t0, x0, 1\
+    beq a0, t0, esPrimo\
+    j noEsPrimo\
 \
-invx: \
+esPrimo:\
+    j returnEs_Primo\
+\
+noEsPrimo:\
+    addi a0, x0, 0\
+    j returnEs_Primo\
+\
+returnEs_Primo:\
+    lw ra, (0)sp\
+    addi sp, sp, 16\
+    ret\
+    \
+\
+\
+cantidad_divisores:\
     addi sp, sp, -16\
-    sw ra, (12)sp\
-    not t0, a0\
-    addi t0, t0, 1\
-    mv a0, t0\
-    lw ra, (12)sp\
+    sw ra, (0)sp\
+    mv a1, a0\
+    addi t0, x0, 1\
+    ble a0, t0, casobase\
+    addi a1, a1, -1\
+    jal cantidad_divisores_rec\
+    j return\
+\
+return:\
+    lw ra, (0)sp\
+    addi sp, sp, 16\
+    ret\
+\
+casobase:\
+    addi a0, x0, 1\
+    j return\
+\
+\
+cantidad_divisores_rec:\
+    addi sp, sp, -16\
+    sw s0, (4)sp # k\
+    sw s1, (8)sp # n\
+    sw ra, (0)sp\
+    \
+    mv s0, a0\
+    mv s1, a1\
+\
+    addi t0, x0, 1\
+    beq s1, t0, casobaseRec\
+    addi a1, a1, -1\
+    jal cantidad_divisores_rec\
+    rem t0, s0, s1\
+    beqz t0, suma1Div\
+    j returnRec\
+\
+casobaseRec:\
+    addi a0, x0, 1\
+    j returnRec\
+\
+suma1Div:\
+    addi a0, a0, 1\
+    j returnRec\
+\
+returnRec:\
+    lw ra, (0)sp\
+    lw s0, (4)sp # k\
+    lw s1, (8)sp # n\
     addi sp, sp, 16\
     ret\
 \

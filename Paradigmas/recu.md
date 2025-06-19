@@ -43,16 +43,17 @@ casobase:
 
 cantidad_divisores_rec:
     addi sp, sp, -16
-    sw a0, (4)sp
-    sw a1, (8)sp
+    sw s0, (4)sp # k
+    sw s1, (8)sp # n
     sw ra, (0)sp
+    mv s0, a0
+    mv s1, a1
+
     addi t0, x0, 1
-    beq a1, t0, casobaseRec
+    beq s1, t0, casobaseRec
 
     jal cant_divisores_rec
-    lw t1, (4)sp
-    lw t2, (8)sp
-    rem t0, t1, t2
+    rem t0, s0, s1
     beqz t0, suma1Div
     j returnRec
 
@@ -66,6 +67,8 @@ suma1Div:
 
 returnRec:
     lw ra, (0)sp
+    lw s0, (4)sp # k
+    lw s1, (8)sp # n
     addi sp, sp, 16
     ret
 

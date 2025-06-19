@@ -1,0 +1,25 @@
+maximo:
+    addi sp, sp, 16
+    sw ra, (12)sp
+
+    addi s0, a0, 0 # me guardo el puntero inicial
+    addi t1, x0, 0 # puntero i, para saber cuando parar
+    lw t0, (0)a0 # cargo el primero elemento
+    
+loop:
+    beq t1, a1, epilogo # si llegue a n termino
+    addi a0, a0, 4 # avanzo un elemento
+    addi t1, t1, 1 # sumo el contador
+    lw t2, (0)a0 # cargo el elemento i+1
+    bgt t2, t1 cambiarMax # si es mas grande lo reemplazo
+    j loop # sigo buscando
+
+cambiarMax:
+    mv t1, t2
+    j loop
+
+epilogo:
+    mv a0, t1
+    lw ra, (12)sp
+    addi sp, sp, 16
+    ret
