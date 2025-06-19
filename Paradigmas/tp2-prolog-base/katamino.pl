@@ -101,8 +101,7 @@ cantSoluciones(Poda, Columnas, N) :- % Funcion proveniente de la consigna
 
 poda(sinPoda, _).
 poda(podaMod5, T) :- 
-    todosGruposLibresModulo5(T).% Poda tal que las vecindades de posiciones libres del tablero tienen que ser multiplo de 5
- % caso contrario sabemos que no existe posibilidad de llenar el tablero
+    todosGruposLibresModulo5(T).% Poda tal que las vecindades de posiciones libres del tablero tienen que ser multiplo de 5, caso contrario sabemos que no existe posibilidad de llenar el tablero
 
 
 % Ej 11 todosGruposLibresModulo5(+Tablero):
