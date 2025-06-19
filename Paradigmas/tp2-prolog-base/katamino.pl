@@ -17,8 +17,8 @@ sublista(Descartar, Tomar, L, Tomados) :-
 % Ej 2 tablero(+K, -T):
 
 tablero(K,Tablero) :-
-    length(Tablero,5),
-    maplist(longitud(K),Tablero).
+    length(Tablero,5), % instanciamos las filas en 5
+    maplist(longitud(K),Tablero). % como length toma los parametros en orden inveritdo, generamos una funcion auxiliar que tome K como parametro inicial, para luego llamar a length(Fila,K), dado el comportamiento de maplist
 
 longitud(K, Fila) :-
     length(Fila,K).
@@ -27,7 +27,7 @@ longitud(K, Fila) :-
 
 tamano([], 0, _). % Caso Base
 tamano([Fila | M], F, C) :-
-    tamano(M, F1, C), % llamamos recursivamente a la funcion
+    tamano(M, F1, C), % llamamos recursivamente a al predicado con la cola de la lista
     F is F1 + 1, % Instanciamos F = F1 + 1
     length(Fila, C). % Corroboramos que la cantidad de columnas sea correcta para todo F
 

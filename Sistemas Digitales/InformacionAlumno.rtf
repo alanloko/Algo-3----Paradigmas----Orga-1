@@ -10,7 +10,7 @@
 \outl0\strokewidth0 \strokec2 .data\
 tablaCalificaciones:\
     .half 1001     # ID impar\
-    .byte 7        # Nota \uc0\u8594  se suma\
+    .byte 0x7        # Nota \uc0\u8594  se suma\
 \
     .half 2000     # ID par\
     .byte 10       # Nota \uc0\u8594  no se suma\
@@ -43,7 +43,7 @@ sumanotas:\
 ParOImpar:\
     lw a0, (0)sp # cargo el puntero\
     add a0, a0, t1 # le agrego el offset\
-    lh t0, (0)a0 # cargo el ID\
+    lhu t0, (0)a0 # cargo el ID\
     beqz t0, return # si es 0 llegue al final\
     mv a0, t0 # chequeo si el ID es par\
     sw t1, (8)sp\
@@ -57,7 +57,7 @@ SumaImpares:\
     addi t1, t1, 2\
     lw a0, (0)sp\
     add a0, a0, t1\
-    lb t0, (0)a0\
+    lbu t0, (0)a0\
     add t3, t0, t3\
     addi t1, t1, 1\
     j ParOImpar\
@@ -122,5 +122,6 @@ noPar:\
 Par:\
     addi a0, x0, 1\
     j returnPar\
+\
 \
 }
