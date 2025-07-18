@@ -13,24 +13,22 @@ sublista(Descartar, Tomar, L, Tomados) :-
 % Ej 12: Queremos ver si sublista(-Descartar, +Tomar, +L, +R):
 %   En el caso de que sea cierto que R/Tomados sea una Sublista, va a encontrar el tamaño de Descartar tal que se cumpla, pero luego de haberlos encontrado o que no existan desde un principio, este programa se va a colgar, dado que el length(Descartados, Descartar) crea una generacion infinta de listas porque al no estar instanciado Descartar, la lista Descartados puede tener diferntes longitudes, las cuales instancia a medida que avanza el programa infinitamente.
 %   Con esto llegamos a la conclusion de que la funcion sublista(Descartar, Tomar, L, Tomados) no es reversible en el 1er y 4to argumento.
-
+% El hecho de que Descartados y Descartar ambos no esten instanciados, hace que length(Descartados, Descartar) cree una generacion infinita.
 % Ej 2 tablero(+K, -T):
 
 tablero(K,Tablero) :-
     length(Tablero,5), % instanciamos las filas en 5
-    maplist(longitud(K),Tablero). % como length toma los parametros en orden inveritdo, generamos una funcion auxiliar que tome K como parametro inicial, para luego llamar a length(Fila,K), dado el comportamiento de maplist
+    maplist(fliplength(K),Tablero). % como length toma los parametros en orden inveritdo, generamos una funcion auxiliar que tome K como parametro inicial, para luego llamar a length(Fila,K), dado el comportamiento de maplist
 
-longitud(K, Fila) :-
+fliplength(K, Fila) :-
     length(Fila,K).
 
 % Ej 3 tamano(+M, -F, -C):
 
 tamano([], 0, _). % Caso Base
 tamano([Fila | M], F, C) :-
-    tamano(M, F1, C), % llamamos recursivamente a al predicado con la cola de la lista
-    F is F1 + 1, % Instanciamos F = F1 + 1
-    length(Fila, C). % Corroboramos que la cantidad de columnas sea correcta para todo F
-
+    length([Fila | M], F), % F = número de filas
+    length(Fila, C).     % C = número de columnas
 % Ej 4 coordenadas(+T, -IJ):
 
 coordenadas(Tablero, (I,J)) :-
@@ -42,30 +40,30 @@ coordenadas(Tablero, (I,J)) :-
 
 kPiezas(K, PS) :-
     nombrePiezas(P), % instanciamos las piezas
-    subKPieza(K, P, PS). % instanciamos PS como una lista de K piezas que pertenecen a P
+    sublistaDeKPiezas(K, P, PS). % instanciamos PS como una lista de K piezas que pertenecen a P
 
-subKPieza(0, _, []). % K = 0, lista vacia
-subKPieza(K, [Pieza|ColaPiezas], [Pieza|ColaPS]) :- % la cabeza de la lista de piezas (o sub-lista de piezas) tiene que ser igual a la cabeza del resultado.
+sublistaDeKPiezas(0, _, []). % K = 0, lista vacia
+sublistaDeKPiezas(K, [Pieza|ColaPiezas], [Pieza|ColaPS]) :- % la cabeza de la lista de piezas (o sub-lista de piezas) tiene que ser igual a la cabeza del resultado.
     K > 0,
     K1 is K - 1, % instanciamos K1 = K - 1, representa el haber "agregado" un elemento a ColaPS
-    subKPieza(K1, ColaPiezas, ColaPS). % pedimos que la cola de la lista cumpla con el predicado
-subKPieza(K, [_|ColaPiezas], PS) :- % Ignoramos el elemento en la cabeza de la lista de Piezas
+    length(ColaPiezas,N),
+    N >= K1, % Chequeo que la cantidad de Piezas restantes sean mayores a la cantidad de piezas fatantes por elegir
+    sublistaDeKPiezas(K1, ColaPiezas, ColaPS). % pedimos que la cola de la lista cumpla con el predicado
+sublistaDeKPiezas(K, [_|ColaPiezas], PS) :- % Ignoramos el elemento en la cabeza de la lista de Piezas
     K > 0, % al no "agregar" un elemento, seguimos queriendo K elementos restantes
-    subKPieza(K, ColaPiezas, PS). % Buscamos que los argumetos cumplan con el predicado
+    length(ColaPiezas,N),
+    N >= K1, % Chequeo que la cantidad de Piezas restantes sean mayores a la cantidad de piezas fatantes por elegir
+    sublistaDeKPiezas(K, ColaPiezas, PS). % Buscamos que los argumetos cumplan con el predicado
 
 % Ej 6 seccionTablero(+T,+ALTO, +ANCHO, +IJ, ?ST):
 
 seccionTablero(Tablero, Alto, Ancho, (I,J), ST) :-
     I0 is I - 1,
     J0 is J - 1,
-    sublista(I0, Alto, Tablero, SubTablero), % instanciamos un SubTablero desde I con tamaño Alto
-    seccionFila(SubTablero,J0, Ancho, ST). % dentro del SubTablero, achicamos desde j hasta Ancho elementos por cada fila
+    sublista(I0, Alto, Tablero, SubFilas), % instanciamos un SubFilas desde I con tamaño Alto
+    maplist(sublista(J0, Ancho), Filas, ST). % dentro del SubFilas, achicamos desde j hasta Ancho elementos por cada fila
 
 
-seccionFila([], _, _, []).
-seccionFila([Fila | Tablero], J, Ancho, [Res | Cola]) :- 
-    sublista(J, Ancho, Fila, Res), % "agarramos" Ancho elementos desde el j-esimo elemento
-    seccionFila(Tablero, J, Ancho, Cola). % Esto lo repetimos por cada Fila del Tablero
 
 % Ej 7 ubicarPieza(+Tablero, +Identificador):
 
@@ -79,8 +77,8 @@ ubicarPieza(Tablero, Identificador) :-
 ubicarPiezas(_, _,[]).
 ubicarPiezas(Tablero, Poda,[Identificador | Identificadores]) :-
     ubicarPieza(Tablero, Identificador), % Ubicamos la pieza actual dentro del tablero
-    poda(Poda, Tablero), % en Caso de elegir podaMod5, esto no se cumple cuando el tablero no tenga una vencidad de variables libres que no sea multplo de 5
-    ubicarPiezas(Tablero, Poda, Identificadores). % Luego de instanciar el tablero con la pieza ubicada, llamamos recursivamente a a funcion para ubicar las piezas restantes
+    poda(Poda, Tablero), % en Caso de elegir podaMod5, esto no se cumple cuando el tablero no tenga una vecindad de variables libres que no sea multplo de 5
+    ubicarPiezas(Tablero, Poda, Identificadores). % Luego de instanciar el tablero con la pieza ubicada, llamamos recursivamente al predicado para ubicar las piezas restantes
     
     
 
@@ -97,6 +95,13 @@ cantSoluciones(Poda, Columnas, N) :- % Funcion proveniente de la consigna
     findall(T, llenarTablero(Poda, Columnas, T), TS),
     length(TS, N).
 
+% ?- time(cantSoluciones(sinPoda, 3, N)).
+% 25,849,472 inferences, 1.075 CPU in 1.079 seconds (100% CPU, 24055732 Lips)
+% N = 28.
+
+% ?- time(cantSoluciones(sinPoda, 4, N)).
+% 989,676,164 inferences, 40.254 CPU in 40.355 seconds (100% CPU, 24586002 Lips)
+% N = 200.
 
 
 poda(sinPoda, _).
@@ -113,12 +118,21 @@ coordLibre(T,(I,J)) :-
 
 todosGruposLibresModulo5(T) :- 
     findall((I,J), coordLibre(T, (I,J)),L), % Encontramos todos las coordenadas libres
-    agrupar(L,Res),  % Las agrupamos segun su vecindad
-    todosMod5(Res). % Nos fijamos que todos cumplan la condicion
+    agrupar(L,GruposLibres),  % Las agrupamos segun su vecindad
+    todosMod5(GruposLibres). % Nos fijamos que todos cumplan la condicion
 
 todosMod5(LugaresLibres) :- 
-    maplist(esMod5,LugaresLibres). % Para todos los lugares libres tiene que cumplirse que sean multiplo de 5
+    maplist(esMod5,LugaresLibres). % Para todos los grupos de lugares libres tiene que cumplirse que sean multiplo de 5
 
 esMod5(L) :- 
     length(L, N), % Instanciamos la longitud de L
     0 =:= N mod 5. % Corroboramos que sea multiplo de 5
+
+
+% ?- time(cantSoluciones(podaMod5, 3, N)).
+% 15,996,808 inferences, 0.768 CPU in 0.808 seconds (95% CPU, 20834223 Lips)
+% N = 28.
+
+% ?- time(cantSoluciones(podaMod5, 4, N)).
+% 356,866,660 inferences, 17.283 CPU in 18.522 seconds (93% CPU, 20647881 Lips)
+% N = 200.

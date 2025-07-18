@@ -1,0 +1,7 @@
+OmEntry {
+	#tags : {
+		#timestamp : DateAndTime [ '2025-06-23T19:53:35.043704-03:00' ],
+		#self : OmReference [ '1' ]
+	},
+	#content : 'N'
+}
